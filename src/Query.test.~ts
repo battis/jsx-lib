@@ -1,0 +1,29 @@
+import Fixture from './Query.fixture';
+import Query from './Query';
+
+describe('Query', () => {
+    beforeAll(() => {
+        // FIXME probably a better way to do this
+        Object.defineProperty(global.self, 'location', {
+            value: {
+                search: Fixture.search
+            }
+        });
+    });
+
+    test('parseGetParameters', () => {
+        expect(Query.parseGetParameters()).toEqual(Fixture.formData);
+    });
+
+    test('getFormData', () => {
+        const formData = Query.getFormData({
+            foo: 'bar',
+            baz: 12,
+            arr: [0, 'one', { three: 3 }]
+        });
+        expect(formData).toBeInstanceOf(FormData);
+        expect(formData.get('foo')).toBe('bar');
+        expect(formData.get('baz')).toBe('12');
+        expect(formData.get('arr')).toBe('0,one,[object Object]');
+    });
+});
